@@ -1,0 +1,8 @@
+{
+  "name": "IELTS Reading Skill Focus - P1_10",
+  "description": "Interactive IELTS Reading practice and test simulation for Reading Passage 1: Bats to the rescue (Questions 1–13), with 20-minute timer, text highlighter, collapsible notes, table completion, and detailed bilingual explanations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
