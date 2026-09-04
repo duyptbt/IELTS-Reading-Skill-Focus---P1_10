@@ -174,6 +174,25 @@ export default function App() {
 
   // Handle Mode Change
   const handleModeChange = (newMode: Mode) => {
+    if (newMode === mode) return;
+
+    if (mode === 'test' && !isSubmitted && newMode !== 'test') {
+      setConfirmModal({
+        isOpen: true,
+        title: 'Leave Timed Test?',
+        message: 'You are currently in an active timed test. Leaving will pause your session. Are you sure you want to switch modes?',
+        confirmLabel: 'Leave Test',
+        cancelLabel: 'Stay in Test',
+        isDestructive: false,
+        onConfirm: () => {
+          setMode(newMode);
+          setIsTimerRunning(false);
+          closeConfirmModal();
+        },
+      });
+      return;
+    }
+
     setMode(newMode);
     if (newMode === 'test') {
       if (!isSubmitted) {
@@ -360,7 +379,8 @@ export default function App() {
   };
 
   const answeredCount = Object.values(userAnswers).filter((ans): ans is string => typeof ans === 'string' && ans.trim().length > 0).length;
-  const isConsolidationUnlocked = isSubmitted || answeredCount > 0;
+  // Consolidation contains complete answer keys & definitions; lock it during active test mode
+  const isConsolidationUnlocked = isSubmitted || (mode === 'practice' && answeredCount > 0);
 
   return (
     <div className="min-h-screen bg-[#F1F5F9] text-slate-800 flex flex-col font-sans">

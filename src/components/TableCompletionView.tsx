@@ -61,6 +61,8 @@ export const TableCompletionView: React.FC<TableCompletionViewProps> = ({
     const isOverLimit = wordCount > 1; // Strict ONE WORD ONLY
     const isChecked = checkedQuestions[q.id] || (isSubmitted && mode === 'test');
     const isCorrect = isChecked ? checkAnswerCorrectness(q, answer) : false;
+    // In Test mode, suppress all placeholder hints (e.g., parts of speech, categories)
+    const activePlaceholder = mode === 'test' ? '' : placeholder;
 
     return (
       <span className="inline-flex flex-col mx-1 align-middle my-1">
@@ -74,7 +76,7 @@ export const TableCompletionView: React.FC<TableCompletionViewProps> = ({
             value={answer}
             onChange={(e) => onAnswerChange(q.id, e.target.value)}
             disabled={isSubmitted && mode === 'test'}
-            placeholder={placeholder}
+            placeholder={activePlaceholder}
             className={`w-[140px] sm:w-[170px] px-2.5 py-1.5 text-xs sm:text-sm rounded-lg border font-sans font-medium outline-none transition-all ${
               isChecked
                 ? isCorrect
@@ -190,7 +192,7 @@ export const TableCompletionView: React.FC<TableCompletionViewProps> = ({
           <p className="text-xs text-slate-600 mt-1 font-medium">
             Choose <span className="underline font-bold text-rose-700">ONE WORD ONLY</span> from the passage for each answer.
           </p>
-          {explanationLanguage !== 'en' && (
+          {(mode === 'practice' || isSubmitted) && explanationLanguage !== 'en' && (
             <p className="text-[11px] text-blue-800 italic mt-0.5">
               🇻🇳 Hướng dẫn: Chọn DUY NHẤT MỘT TỪ từ bài đọc cho mỗi câu trả lời 7–13.
             </p>
@@ -248,7 +250,7 @@ export const TableCompletionView: React.FC<TableCompletionViewProps> = ({
                     ultrasonic recording to identify favourite feeding spots
                   </li>
                   <li className="leading-loose">
-                    DNA analysis of bat {renderInputField(7, 'e.g. droppings')}
+                    DNA analysis of bat {renderInputField(7, 'noun...')}
                   </li>
                 </ul>
                 {renderQuestionMetaRow(7)}
@@ -328,16 +330,18 @@ export const TableCompletionView: React.FC<TableCompletionViewProps> = ({
         </table>
       </div>
 
-      {/* Footer helper summary */}
-      <div className="bg-slate-50 px-4 sm:px-6 py-3 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-blue-600" />
-          <span>Questions 7–13 trace sequentially through Paragraphs 6, 7, 8, 10, and 11.</span>
+      {/* Footer helper summary (Practice mode or post-submission only) */}
+      {(mode === 'practice' || isSubmitted) && (
+        <div className="bg-slate-50 px-4 sm:px-6 py-3 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-blue-600" />
+            <span>Questions 7–13 trace sequentially through Paragraphs 6, 7, 8, 10, and 11.</span>
+          </div>
+          <span className="text-slate-500 font-medium italic">
+            Tip: Copy exact single words directly from the reading text.
+          </span>
         </div>
-        <span className="text-slate-500 font-medium italic">
-          Tip: Copy exact single words directly from the reading text.
-        </span>
-      </div>
+      )}
     </div>
   );
 };
